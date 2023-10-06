@@ -12,14 +12,14 @@ pygame.init()
 dis=pygame.display.set_mode((window_width,window_height))
 clock = pygame.time.Clock()
 pygame.display.update()
-pygame.display.set_caption('Snake game by Edureka')
+pygame.display.set_caption('SNAKE GAME')
 
 class SnakeGame:
     def __init__(self,dis) -> None:
         self.dis = dis
         self.one_head = {
-            "x" : 200,
-            "y" : 150,
+            "x" : round(random.randrange(0, window_width - snake_block) / 10.0) * 10.0,
+            "y" : round(random.randrange(0, window_height - snake_block) / 10.0) * 10.0,
             "width" : snake_block,
             "length" : snake_block
         }
@@ -75,6 +75,7 @@ class SnakeGame:
                 y_change = snake_block
             self.snake_move(x_change,y_change)
             if self.snake_heads[0]["x"] == self.food["x"] and self.snake_heads[0]["y"] == self.food["y"]:
+                #Snake eat food
                 self.snake_eat(x_change, y_change)
             if self.snake_heads[0]["x"] >= window_width or self.snake_heads[0]["y"] >= window_height or (self.snake_heads[0] in self.snake_heads[1:]):
                 #Hit boundary or eat itself
