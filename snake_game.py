@@ -17,13 +17,13 @@ pygame.display.set_caption('SNAKE GAME')
 class SnakeGame:
     def __init__(self,dis) -> None:
         self.dis = dis
-        self.one_head = {
+        one_head = {
             "x" : round(random.randrange(0, window_width - snake_block) / 10.0) * 10.0,
             "y" : round(random.randrange(0, window_height - snake_block) / 10.0) * 10.0,
             "width" : snake_block,
             "length" : snake_block
         }
-        self.snake_heads = [self.one_head]
+        self.snake_heads = [one_head]
         self.food = {
             "x" : round(random.randrange(0, window_width - snake_block) / 10.0) * 10.0,
             "y" : round(random.randrange(0, window_height - snake_block) / 10.0) * 10.0,
@@ -59,32 +59,58 @@ class SnakeGame:
         print("EAT", self.snake_heads)
         
     def event_handle(self,event):
-        if event.type == pygame.QUIT:
+        point = 0
+        x_change = 0
+        y_change = 0
+        if event == 2:
+            x_change = -snake_block
+        elif event == 3:
+            x_change = snake_block
+        elif event == 1:
+            y_change = -snake_block
+        elif event == 0:
+            y_change = snake_block
+        self.snake_move(x_change,y_change)
+        if self.snake_heads[0]["x"] == self.food["x"] and self.snake_heads[0]["y"] == self.food["y"]:
+            #The snake eat food
+            point = 1
+            self.snake_eat(x_change, y_change)
+        if self.snake_heads[0]["x"] >= window_width or self.snake_heads[0]["y"] >= window_height or (self.snake_heads[0] in self.snake_heads[1:]):
+            #Hit boundary or eat itself
             self.game_over = True
-            return self.game_over
-        elif event.type == pygame.KEYDOWN:
-            x_change = 0
-            y_change = 0
-            if event.key == pygame.K_LEFT:
-                x_change = -snake_block
-            elif event.key == pygame.K_RIGHT:
-                x_change = snake_block
-            elif event.key == pygame.K_UP:
-                y_change = -snake_block
-            elif event.key == pygame.K_DOWN:
-                y_change = snake_block
-            self.snake_move(x_change,y_change)
-            if self.snake_heads[0]["x"] == self.food["x"] and self.snake_heads[0]["y"] == self.food["y"]:
-                #Snake eat food
-                self.snake_eat(x_change, y_change)
-            if self.snake_heads[0]["x"] >= window_width or self.snake_heads[0]["y"] >= window_height or (self.snake_heads[0] in self.snake_heads[1:]):
-                #Hit boundary or eat itself
-                self.game_over = True
+        return self.snake_heads, point, self.game_over
     
+    def restart(self):
+        one_head = {
+            "x" : round(random.randrange(0, window_width - snake_block) / 10.0) * 10.0,
+            "y" : round(random.randrange(0, window_height - snake_block) / 10.0) * 10.0,
+            "width" : snake_block,
+            "length" : snake_block
+        }
+        self.snake_heads = [one_head]
+        self.food = {
+            "x" : round(random.randrange(0, window_width - snake_block) / 10.0) * 10.0,
+            "y" : round(random.randrange(0, window_height - snake_block) / 10.0) * 10.0,
+            "width" : snake_block,
+            "length" : snake_block
+        }
+        self.event = None 
+        self.game_over = False
+
     def start(self):
         while not self.game_over:
             for event in pygame.event.get():
-                self.event_handle(event)
+                if event.type == pygame.QUIT:
+                    self.game_over = True
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        self.event_handle(2)
+                    elif event.key == pygame.K_RIGHT:
+                        self.event_handle(3)
+                    elif event.key == pygame.K_UP:
+                        self.event_handle(1)
+                    elif event.key == pygame.K_DOWN:
+                        self.event_handle(0)
             dis.fill((255,255,255))
             for head in self.snake_heads:
                 pygame.draw.rect(dis,(0,0,255),[head["x"],head["y"],head["width"],head["length"]])
@@ -94,5 +120,5 @@ class SnakeGame:
         pygame.quit()
         quit()
           
-game = SnakeGame(dis)
-game.start()
+# game = SnakeGame(dis)
+# game.start()
