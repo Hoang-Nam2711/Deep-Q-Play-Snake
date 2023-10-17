@@ -2,6 +2,7 @@ import pygame
 import random
 from gym import Env
 from gym.spaces import Discrete, Box 
+import time
 
 window_width = 400
 window_height = 300
@@ -41,7 +42,7 @@ class SnakeGame:
             "length" : snake_block
         })
         del self.snake_heads[-1]
-        print("MOVE", self.snake_heads)
+        # print("MOVE", self.snake_heads)
     
     def snake_eat(self,x,y):
         #Create new food
@@ -57,9 +58,23 @@ class SnakeGame:
         }
         self.snake_heads.append(new_head)
         print("EAT", self.snake_heads)
+    
+    def snake_grow(self, x_change, y_change):
+        if self.snake_heads[0]["x"] == self.food["x"] and self.snake_heads[0]["y"] == self.food["y"]:
+            self.snake_eat(x_change, y_change)
+            return 1
+        return 0
+
+    def snake_die(self):
+        #hit boundary 
+        if (self.snake_heads[0]["x"] // window_width) != 0 or (self.snake_heads[0]["y"] // window_height) != 0:
+            return True
+        #eat itself
+        elif (self.snake_heads[0] in self.snake_heads[1:]):
+            return True
         
     def event_handle(self,event):
-        point = 0
+        # point = 0
         x_change = 0
         y_change = 0
         if event == 2:
@@ -71,12 +86,8 @@ class SnakeGame:
         elif event == 0:
             y_change = snake_block
         self.snake_move(x_change,y_change)
-        if self.snake_heads[0]["x"] == self.food["x"] and self.snake_heads[0]["y"] == self.food["y"]:
-            #The snake eat food
-            point = 1
-            self.snake_eat(x_change, y_change)
-        if self.snake_heads[0]["x"] >= window_width or self.snake_heads[0]["y"] >= window_height or (self.snake_heads[0] in self.snake_heads[1:]):
-            #Hit boundary or eat itself
+        point = self.snake_grow(x_change, y_change)
+        if self.snake_die():
             self.game_over = True
         return self.snake_heads, point, self.game_over
     
@@ -120,5 +131,5 @@ class SnakeGame:
         pygame.quit()
         quit()
           
-# game = SnakeGame(dis)
-# game.start()
+game = SnakeGame(dis)
+game.start()

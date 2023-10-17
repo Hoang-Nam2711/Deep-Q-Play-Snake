@@ -11,7 +11,7 @@ class Enviroment:
         self.action_space = Discrete(4) #0 : Up, 1 : Down, 2: Left, 3:Right
         self.observation_space = Box(low=np.array([0,0],dtype=np.float32), high=np.array([window_width,window_height],dtype=np.float32))
         #First State 
-        self.keyboard = Controller()
+        # self.keyboard = Controller()
         self.snake = SnakeGame(dis)
         
     def render(self,state):
@@ -30,8 +30,15 @@ class Enviroment:
     def reset(self):
         self.snake.restart()
       
-print("HERE")  
 env = Enviroment()
-env.step(2)
-env.step(1)
-env.step(3)
+# score = 0
+for episode in range(1, 11):
+    done = False
+    score = 0
+    env.reset()
+    while not done:
+        action = env.action_space.sample()
+        state, point, done = env.step(action)
+        score += point
+        # done =True
+    print('Episode:{} Score:{}'.format(episode, score))
