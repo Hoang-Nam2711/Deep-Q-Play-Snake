@@ -5,6 +5,7 @@ from pynput.keyboard import Key, Controller
 import random 
 import pygame
 from snake_game import SnakeGame, window_width, window_height, dis, snake_speed, snake_block, clock
+import torch 
 
 class Enviroment:
     def __init__(self) -> None:
@@ -24,21 +25,22 @@ class Enviroment:
         
     def step(self,action):
         state, point, done = self.snake.event_handle(action) 
-        self.render(state)
-        return state, point, done 
+        state_tensor = torch.tensor([state[0]["x"], state[0]["y"]]).unsqueeze(0)
+        return state_tensor, point, done 
 
     def reset(self):
-        self.snake.restart()
+        init_snake = self.snake.restart()
+        init_state = torch.tensor([init_snake[0]["x"], init_snake[0]["y"]]).unsqueeze(0)
+        return init_state
       
-env = Enviroment()
-# score = 0
-for episode in range(1, 11):
-    done = False
-    score = 0
-    env.reset()
-    while not done:
-        action = env.action_space.sample()
-        state, point, done = env.step(action)
-        score += point
-        # done =True
-    print('Episode:{} Score:{}'.format(episode, score))
+# env = Enviroment()
+# # score = 0
+# for episode in range(1, 11):
+#     done = False
+#     score = 0
+#     env.reset()
+#     while not done:
+#         action = env.action_space.sample()
+#         state, point, done = env.step(action)
+#         score += point
+#     print('Episode:{} Score:{}'.format(episode, score))

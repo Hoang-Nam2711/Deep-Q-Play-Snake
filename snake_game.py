@@ -4,8 +4,8 @@ from gym import Env
 from gym.spaces import Discrete, Box 
 import time
 
-window_width = 400
-window_height = 300
+window_width = 200
+window_height = 200
 game_over=False
 snake_block = 10
 snake_speed = 30
@@ -70,8 +70,8 @@ class SnakeGame:
         if (self.snake_heads[0]["x"] // window_width) != 0 or (self.snake_heads[0]["y"] // window_height) != 0:
             return True
         #eat itself
-        elif (self.snake_heads[0] in self.snake_heads[1:]):
-            return True
+        # elif (self.snake_heads[0] in self.snake_heads[1:]):
+        #     return True
         
     def event_handle(self,event):
         # point = 0
@@ -107,6 +107,7 @@ class SnakeGame:
         }
         self.event = None 
         self.game_over = False
+        return self.snake_heads
 
     def start(self):
         while not self.game_over:
@@ -131,5 +132,5 @@ class SnakeGame:
         pygame.quit()
         quit()
           
-game = SnakeGame(dis)
-game.start()
+# game = SnakeGame(dis)
+# game.start()
